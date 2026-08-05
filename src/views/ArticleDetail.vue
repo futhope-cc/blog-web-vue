@@ -1,11 +1,11 @@
 <template>
-  <div class="max-w-6xl mx-auto px-4 py-10">
+  <div class="max-w-[1400px] mx-auto px-4 py-10">
     <div v-loading="loading" class="min-h-[400px]">
       <el-empty v-if="!loading && !article" description="文章不存在或已被删除">
         <el-button type="primary" @click="router.push('/articles')">返回文章列表</el-button>
       </el-empty>
 
-      <div v-if="article" class="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-8 items-start">
+      <div v-if="article" class="grid grid-cols-1 lg:grid-cols-[210px_1fr_210px] gap-8 items-start">
         <div>
           <!-- 文章头 -->
           <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
@@ -49,111 +49,13 @@
               <el-button size="large" round :type="liked ? 'danger' : 'default'" @click="toggleLike">
                 <el-icon class="mr-1"><StarFilled /></el-icon> {{ liked ? '已点赞' : '点赞' }} {{ article.likeCount }}
               </el-button>
-              <el-button size="large" round @click="scrollToComments">
-                <el-icon class="mr-1"><ChatDotRound /></el-icon> 评论 {{ comments.length }}
-              </el-button>
-            </div>
-          </div>
-
-          <!-- 评论 -->
-          <div id="comments" class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 mt-6">
-            <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-              <el-icon color="#4f46e5"><ChatDotRound /></el-icon> 评论 ({{ comments.length }})
-            </h2>
-
-            <el-form v-if="!replyingTo" @submit.prevent="submitComment">
-              <div class="flex gap-3">
-                <img :src="commentAvatar" alt="avatar" class="w-10 h-10 rounded-full shrink-0" />
-                <div class="flex-1">
-                  <el-input
-                    v-model="newComment"
-                    type="textarea"
-                    :rows="3"
-                    maxlength="500"
-                    show-word-limit
-                    placeholder="友善的交流从一句评论开始..."
-                  />
-                  <div class="mt-3 flex items-center justify-between">
-                    <el-input v-model="commentUsername" placeholder="昵称（选填）" class="!w-40" size="small" />
-                    <el-button type="primary" round :loading="submitting" @click="submitComment">发表评论</el-button>
-                  </div>
-                </div>
-              </div>
-            </el-form>
-
-            <div v-if="replyingTo" class="mb-6 p-4 rounded-xl bg-indigo-50 flex items-center justify-between">
-              <span class="text-sm text-slate-600">
-                回复 <b class="text-primary">{{ replyingTo.username }}</b> 的评论
-              </span>
-              <el-button text type="primary" size="small" @click="cancelReply">取消回复</el-button>
-            </div>
-
-            <div class="space-y-6">
-              <div v-for="comment in comments" :key="comment.id" class="flex gap-3">
-                <img :src="avatarFor(comment.username)" :alt="comment.username"
-                     class="w-10 h-10 rounded-full bg-indigo-100 shrink-0" />
-                <div class="flex-1">
-                  <div class="flex items-center gap-2 flex-wrap">
-                    <span class="font-medium text-slate-700 text-sm">{{ comment.username }}</span>
-                    <span class="text-xs text-slate-400">{{ timeAgo(comment.createTime) }}</span>
-                  </div>
-                  <p class="mt-1.5 text-sm text-slate-600 leading-relaxed">{{ comment.content }}</p>
-                  <div class="mt-1.5">
-                    <el-button text type="primary" size="small" @click="startReply(comment)">
-                      <el-icon class="mr-1"><ChatLineRound /></el-icon> 回复
-                    </el-button>
-                  </div>
-                  <div v-if="replies[comment.id]?.length" class="mt-3 ml-2 pl-4 border-l-2 border-indigo-100 space-y-4">
-                    <div v-for="reply in replies[comment.id]" :key="reply.id" class="flex gap-3">
-                      <img :src="avatarFor(reply.username)" :alt="reply.username"
-                           class="w-8 h-8 rounded-full bg-indigo-50 shrink-0" />
-                      <div class="flex-1">
-                        <div class="flex items-center gap-2 flex-wrap">
-                          <span class="font-medium text-slate-700 text-sm">{{ reply.username }}</span>
-                          <span class="text-xs text-slate-400">{{ timeAgo(reply.createTime) }}</span>
-                        </div>
-                        <p class="mt-1 text-sm text-slate-600 leading-relaxed">
-                          <span v-if="reply.parentUsername" class="text-primary text-xs">@{{ reply.parentUsername }} </span>
-                          {{ reply.content }}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <el-empty v-if="comments.length === 0" description="暂无评论，快来抢沙发吧" :image-size="80" />
             </div>
           </div>
         </div>
 
-        <!-- 目录侧边栏 -->
-        <aside class="hidden lg:block sticky top-24">
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 max-h-[70vh] overflow-y-auto">
-            <h3 class="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
-              <el-icon color="#4f46e5"><Menu /></el-icon> 文章目录
-            </h3>
-            <nav class="space-y-1">
-              <a
-                v-for="item in toc"
-                :key="item.id"
-                :href="`#${item.id}`"
-                class="block text-sm leading-relaxed transition-colors py-1"
-                :class="[
-                  item.level === 1 ? 'text-slate-800 font-medium' : 'text-slate-500 hover:text-primary',
-                  { 'text-primary': activeHeading === item.id },
-                  { 'pl-4': item.level === 2 },
-                  { 'pl-7': item.level === 3 },
-                  { 'pl-10': item.level === 4 }
-                ]"
-                @click.prevent="scrollToHeading(item.id)"
-              >
-                {{ item.text }}
-              </a>
-            </nav>
-          </div>
-
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 mt-4">
+        <!-- 左侧边栏：关于作者 -->
+        <aside class="hidden lg:flex flex-col gap-4 sticky top-24 order-first">
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
             <h3 class="text-sm font-bold text-slate-700 mb-3">关于作者</h3>
             <div class="flex items-center gap-3">
               <img :src="profile.avatar" alt="author" class="w-12 h-12 rounded-full" />
@@ -167,6 +69,33 @@
             </el-button>
           </div>
         </aside>
+
+        <!-- 右侧边栏：文章目录 -->
+        <aside class="hidden lg:block sticky top-24 order-last">
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 max-h-[70vh] overflow-y-auto">
+            <h3 class="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
+              <el-icon color="#4f46e5"><Menu /></el-icon> 文章目录
+            </h3>
+            <nav class="space-y-1">
+              <a
+                v-for="item in toc"
+                :key="item.id"
+                :href="`#${item.id}`"
+                class="block text-sm leading-relaxed transition-colors py-1 no-underline"
+                :class="[
+                  item.level === 1 ? 'text-slate-800 font-medium' : 'text-slate-500 hover:text-primary',
+                  { 'text-primary': activeHeading === item.id },
+                  { 'pl-4': item.level === 2 },
+                  { 'pl-7': item.level === 3 },
+                  { 'pl-10': item.level === 4 }
+                ]"
+                @click.prevent="scrollToHeading(item.id)"
+              >
+                {{ item.text }}
+              </a>
+            </nav>
+          </div>
+        </aside>
       </div>
     </div>
   </div>
@@ -177,9 +106,9 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import MarkdownViewer from '@/components/MarkdownViewer.vue'
-import { articleApi, commentApi } from '@/api'
-import type { ArticleDetail, CommentItem } from '@/types'
-import { formatDate, timeAgo } from '@/utils'
+import { articleApi } from '@/api'
+import type { ArticleDetail } from '@/types'
+import { formatDate } from '@/utils'
 import type { TocItem } from '@/utils/markdown'
 
 const route = useRoute()
@@ -191,48 +120,21 @@ const toc = ref<TocItem[]>([])
 const activeHeading = ref('')
 const liked = ref(false)
 
-const comments = ref<CommentItem[]>([])
-const replies = ref<Record<number, CommentItem[]>>({})
-const newComment = ref('')
-const commentUsername = ref('')
-const replyingTo = ref<CommentItem | null>(null)
-const submitting = ref(false)
-
 const profile = {
   nickname: 'DevPanda',
   avatar: 'https://api.dicebear.com/9.x/notionists/svg?seed=panda',
   tagline: '全栈工程师'
 }
 
-const commentAvatar = computed(() => (commentUsername.value ? avatarFor(commentUsername.value) : profile.avatar))
-
 const articleId = computed(() => Number(route.params.id))
-
-function avatarFor(name: string) {
-  return `https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(name || 'guest')}`
-}
 
 async function fetchDetail() {
   loading.value = true
   try {
     article.value = await articleApi.getDetail(articleId.value)
-    await fetchComments()
   } finally {
     loading.value = false
   }
-}
-
-async function fetchComments() {
-  const list = await commentApi.getList({ articleId: articleId.value })
-  const top = list.filter((c) => c.parentId === 0)
-  const child = list.filter((c) => c.parentId !== 0)
-  const replyMap: Record<number, CommentItem[]> = {}
-  child.forEach((c) => {
-    replyMap[c.parentId] = replyMap[c.parentId] || []
-    replyMap[c.parentId].push(c)
-  })
-  comments.value = top
-  replies.value = replyMap
 }
 
 function toggleLike() {
@@ -241,41 +143,6 @@ function toggleLike() {
     article.value.likeCount += liked.value ? 1 : -1
   }
   ElMessage.success(liked.value ? '感谢点赞！' : '已取消点赞')
-}
-
-function startReply(comment: CommentItem) {
-  replyingTo.value = comment
-}
-
-function cancelReply() {
-  replyingTo.value = null
-}
-
-async function submitComment() {
-  const content = newComment.value.trim()
-  if (!content) {
-    ElMessage.warning('请输入评论内容')
-    return
-  }
-  submitting.value = true
-  try {
-    await commentApi.add({
-      articleId: articleId.value,
-      username: commentUsername.value.trim() || '匿名用户',
-      content,
-      parentId: replyingTo.value?.id || 0
-    })
-    ElMessage.success('评论发表成功')
-    newComment.value = ''
-    replyingTo.value = null
-    await fetchComments()
-  } finally {
-    submitting.value = false
-  }
-}
-
-function scrollToComments() {
-  document.getElementById('comments')?.scrollIntoView({ behavior: 'smooth' })
 }
 
 function scrollToHeading(id: string) {

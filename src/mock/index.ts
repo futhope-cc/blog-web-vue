@@ -2,7 +2,6 @@ import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios'
 import {
   mockArticles,
   mockCategories,
-  mockComments,
   mockProjects,
   mockTags
 } from './data'
@@ -10,7 +9,6 @@ import type {
   ArticleDetail,
   ArticleQuery,
   ArticleListItem,
-  CommentItem,
   Project
 } from '@/types'
 
@@ -23,15 +21,13 @@ interface MockContext {
   categories: typeof mockCategories
   tags: typeof mockTags
   projects: Project[]
-  comments: CommentItem[]
 }
 
 const ctx: MockContext = {
   articles: JSON.parse(JSON.stringify(mockArticles)),
   categories: JSON.parse(JSON.stringify(mockCategories)),
   tags: JSON.parse(JSON.stringify(mockTags)),
-  projects: JSON.parse(JSON.stringify(mockProjects)),
-  comments: JSON.parse(JSON.stringify(mockComments))
+  projects: JSON.parse(JSON.stringify(mockProjects))
 }
 
 const ok = (data: unknown) => ({ code: 200, message: 'success', data })
@@ -92,8 +88,6 @@ function parseParams(url: string) {
   return params
 }
 
-const nextId = (arr: { id: number }[]) => arr.reduce((m, x) => Math.max(m, x.id), 0) + 1
-
 function makeResponse(result: MockResult, config: InternalAxiosRequestConfig) {
   const status = result.code === 200 ? 200 : 404
   return {
@@ -112,13 +106,14 @@ export function setupMock(instance: AxiosInstance) {
     if (!url.startsWith('/')) return config
 
     const m = method.toLowerCase()
-    const params = parseParams(url)
+    const params: Record<string, string> = {}
+    if (config.params) {
+      Object.entries(config.params as Record<string, unknown>).forEach(([k, v]) => {
+        params[k] = Array.isArray(v) ? v.join(',') : String(v ?? '')
+      })
+    }
+    Object.assign(params, parseParams(url))
     const cleanUrl = url.split('?')[0]
-    const body: Record<string, unknown> = config.data
-      ? typeof config.data === 'string'
-        ? JSON.parse(config.data || '{}')
-        : config.data
-      : {}
 
     await delay()
 
@@ -159,26 +154,6 @@ export function setupMock(instance: AxiosInstance) {
       const id = Number(cleanUrl.split('/').pop())
       const project = ctx.projects.find((p) => p.id === id)
       result = project ? ok(project) : fail('项目不存在', 404)
-    } else if (cleanUrl === '/comment/list' && m === 'get') {
-      const articleId = params.articleId ? Number(params.articleId) : undefined
-      let list = [...ctx.comments].filter((c) => c.status === 1)
-      if (articleId) list = list.filter((c) => c.articleId === articleId)
-      list.sort((a, b) => (a.id > b.id ? -1 : 1))
-      result = ok(list)
-    } else if (cleanUrl === '/comment' && m === 'post') {
-      const record = ctx.comments.find((c) => c.id === ((body.parentId as number) || 0))
-      const comment: CommentItem = {
-        id: nextId(ctx.comments),
-        articleId: Number(body.articleId),
-        username: String(body.username || '匿名用户'),
-        content: String(body.content || ''),
-        parentId: Number(body.parentId || 0),
-        parentUsername: record?.username,
-        status: 1,
-        createTime: new Date().toISOString().slice(0, 19).replace('T', ' ')
-      }
-      ctx.comments.unshift(comment)
-      result = ok(comment)
     }
 
     config.adapter = async () => makeResponse(result, config)

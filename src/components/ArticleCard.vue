@@ -1,8 +1,20 @@
 <template>
   <article
-    class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-slate-100 transition-all duration-300 hover:-translate-y-1 flex flex-col"
+    :class="[
+      'group rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col',
+      dark
+        ? 'bg-[#241557]/80 border border-violet-400/20 hover:shadow-violet-500/20'
+        : 'bg-white border border-slate-100'
+    ]"
   >
-    <router-link :to="`/article/${article.id}`" class="relative block overflow-hidden h-44 bg-slate-100">
+    <router-link
+      :to="`/article/${article.id}`"
+      :class="[
+        'relative block overflow-hidden',
+        tall ? 'aspect-[16/9]' : 'h-44',
+        dark ? 'bg-[#1b0f45]' : 'bg-slate-100'
+      ]"
+    >
       <img
         :src="article.cover"
         :alt="article.title"
@@ -19,11 +31,11 @@
 
     <div class="p-5 flex flex-col flex-1">
       <router-link :to="`/article/${article.id}`">
-        <h3 class="text-lg font-bold text-slate-800 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 :class="['text-lg font-bold leading-snug line-clamp-2 transition-colors', dark ? 'text-white group-hover:text-cyan-300' : 'text-slate-800 group-hover:text-primary']">
           {{ article.title }}
         </h3>
       </router-link>
-      <p class="mt-2 text-sm text-slate-500 leading-relaxed line-clamp-2 flex-1">{{ article.summary }}</p>
+      <p :class="['mt-2 text-sm leading-relaxed line-clamp-2 flex-1', dark ? 'text-slate-400' : 'text-slate-500']">{{ article.summary }}</p>
 
       <div class="mt-3 flex flex-wrap gap-1.5">
         <el-tag
@@ -31,14 +43,14 @@
           :key="tag.id"
           size="small"
           effect="plain"
-          class="!mr-0"
+          :class="['!mr-0', dark ? '!bg-violet-500/10 !text-violet-200 !border-violet-400/30' : '']"
           @click="router.push({ path: '/articles', query: { tagId: tag.id } })"
         >
           {{ tag.name }}
         </el-tag>
       </div>
 
-      <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+      <div :class="['mt-4 pt-3 flex items-center justify-between text-xs', dark ? 'border-t border-violet-400/10 text-slate-400' : 'border-t border-slate-100 text-slate-400']">
         <span>{{ timeAgo(article.createTime) }}</span>
         <div class="flex items-center gap-3">
           <span class="flex items-center gap-1"><el-icon :size="13"><View /></el-icon>{{ formatCount(article.viewCount) }}</span>
@@ -55,7 +67,7 @@ import { useRouter } from 'vue-router'
 import type { ArticleListItem } from '@/types'
 import { timeAgo } from '@/utils'
 
-defineProps<{ article: ArticleListItem }>()
+defineProps<{ article: ArticleListItem; dark?: boolean; tall?: boolean }>()
 
 const router = useRouter()
 

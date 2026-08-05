@@ -4,7 +4,6 @@ import type {
   ArticleListItem,
   ArticleQuery,
   Category,
-  CommentItem,
   PageResult,
   Project,
   Tag
@@ -37,14 +36,5 @@ export const projectApi = {
   },
   getDetail(id: number) {
     return request<Project>({ url: `/project/${id}`, method: 'get' })
-  }
-}
-
-export const commentApi = {
-  getList(params: { articleId?: number }) {
-    return request<CommentItem[]>({ url: '/comment/list', method: 'get', params })
-  },
-  add(data: { articleId: number; username: string; content: string; parentId?: number }) {
-    return request<CommentItem>({ url: '/comment', method: 'post', data })
   }
 }

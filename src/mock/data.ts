@@ -1,4 +1,4 @@
-import type { ArticleDetail, ArticleListItem, Category, CommentItem, Project, Tag } from '@/types'
+import type { ArticleDetail, ArticleListItem, Category, Project, Tag } from '@/types'
 
 const now = Date.now()
 const days = (n: number) => new Date(now - n * 86400000).toISOString().slice(0, 19).replace('T', ' ')
@@ -961,15 +961,4 @@ export const mockProjects: Project[] = [
     deployment: '单二进制文件分发，支持 systemd 托管',
     createTime: days(300)
   }
-]
-
-export const mockComments: CommentItem[] = [
-  { id: 1, articleId: 1, articleTitle: mockArticles[0].title, username: '音视频小生', content: '写得很清晰，正好在做类似的需求，缓存那一节受益匪浅！', parentId: 0, status: 1, createTime: days(2) },
-  { id: 2, articleId: 1, username: 'Melo', content: '请问锁的过期时间一般设置多少合适？', parentId: 0, status: 1, createTime: days(2) },
-  { id: 3, articleId: 1, username: 'DevPanda', content: '回 @Melo：一般 3~5 秒，建议结合重建耗时动态设置，并配合续期。', parentId: 2, status: 1, createTime: days(1) },
-  { id: 4, articleId: 3, articleTitle: mockArticles[2].title, username: 'CV工程师', content: 'TensorRT FP16 数据很有参考价值，期待出一篇 int8 量化的。', parentId: 0, status: 1, createTime: days(8) },
-  { id: 5, articleId: 3, username: '匿名用户', content: '标记一下，等毕设就做这个方向。', parentId: 0, status: 1, createTime: days(7) },
-  { id: 6, articleId: 2, articleTitle: mockArticles[1].title, username: '流媒体菜鸟', content: 'FFmpeg 那个九宫格缩略图的命令太实用了！', parentId: 0, status: 1, createTime: days(5) },
-  { id: 7, articleId: 7, articleTitle: mockArticles[6].title, username: '后端小王', content: '架构演进那部分画图很直观，收藏了。', parentId: 0, status: 0, createTime: days(30) },
-  { id: 8, articleId: 4, articleTitle: mockArticles[3].title, username: '待审用户', content: '广告广告广告，请管理员删除。', parentId: 0, status: 0, createTime: days(16) }
 ]

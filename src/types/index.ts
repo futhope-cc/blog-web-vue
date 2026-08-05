@@ -58,16 +58,3 @@ export interface Project {
   featured?: number
   createTime: string
 }
-
-export interface CommentItem {
-  id: number
-  articleId: number
-  articleTitle?: string
-  username: string
-  email?: string
-  content: string
-  parentId: number
-  parentUsername?: string
-  status: number
-  createTime: string
-}

@@ -47,7 +47,7 @@
       <router-view />
     </main>
 
-    <footer class="bg-slate-900 text-slate-300 mt-16">
+    <footer class="bg-slate-900 text-slate-300">
       <div class="max-w-6xl mx-auto px-4 py-10">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
