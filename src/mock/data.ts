@@ -1,30 +1,30 @@
-import type { ArticleDetail, ArticleListItem, Category, Project, Tag } from '@/types'
+import type { ArticleDetail, ArticleListItem, Category, Profile, Project, Tag } from '@/types'
 
 const now = Date.now()
-const days = (n: number) => new Date(now - n * 86400000).toISOString().slice(0, 19).replace('T', ' ')
+const days = (n: number) => new Date(now - n * 86400000).toISOString().slice(0, 19)
 
 export const mockCategories: Category[] = [
-  { id: 1, name: 'C++', sort: 1, createTime: days(300) },
-  { id: 2, name: 'Java', sort: 2, createTime: days(280) },
-  { id: 3, name: 'AI', sort: 3, createTime: days(260) },
-  { id: 4, name: '音视频', sort: 4, createTime: days(240) },
-  { id: 5, name: 'Linux', sort: 5, createTime: days(220) },
-  { id: 6, name: '架构设计', sort: 6, createTime: days(200) }
+  { id: '1', name: 'C++', sort: 1, createTime: days(300) },
+  { id: '2', name: 'Java', sort: 2, createTime: days(280) },
+  { id: '3', name: 'AI', sort: 3, createTime: days(260) },
+  { id: '4', name: '音视频', sort: 4, createTime: days(240) },
+  { id: '5', name: 'Linux', sort: 5, createTime: days(220) },
+  { id: '6', name: '架构设计', sort: 6, createTime: days(200) }
 ]
 
 export const mockTags: Tag[] = [
-  { id: 1, name: 'FFmpeg' },
-  { id: 2, name: 'OpenCV' },
-  { id: 3, name: 'YOLO' },
-  { id: 4, name: 'TensorRT' },
-  { id: 5, name: 'GB28181' },
-  { id: 6, name: 'Spring Boot' },
-  { id: 7, name: 'Vue3' },
-  { id: 8, name: 'MySQL' },
-  { id: 9, name: 'Redis' },
-  { id: 10, name: 'Docker' },
-  { id: 11, name: 'Nginx' },
-  { id: 12, name: '性能优化' }
+  { id: '1', name: 'FFmpeg' },
+  { id: '2', name: 'OpenCV' },
+  { id: '3', name: 'YOLO' },
+  { id: '4', name: 'TensorRT' },
+  { id: '5', name: 'GB28181' },
+  { id: '6', name: 'Spring Boot' },
+  { id: '7', name: 'Vue3' },
+  { id: '8', name: 'MySQL' },
+  { id: '9', name: 'Redis' },
+  { id: '10', name: 'Docker' },
+  { id: '11', name: 'Nginx' },
+  { id: '12', name: '性能优化' }
 ]
 
 const mdIntro = `
@@ -751,165 +751,154 @@ wrk -t8 -c200 -d30s http://localhost:8080/api/article/list
 
 export const mockArticles: ArticleDetail[] = [
   {
-    id: 1,
+    id: '1',
     title: 'Spring Boot 3 项目从 0 到 1：构建一个高性能 REST API',
     summary: '基于 JDK 17 + Spring Boot 3 + MyBatis-Plus 完整搭建 REST API 项目，涵盖统一响应、JWT 认证、缓存层设计等关键实践。',
     cover: 'https://picsum.photos/seed/spring/800/450',
-    categoryId: 2,
-    tags: [mockTags.find((t) => t.id === 6)!, mockTags.find((t) => t.id === 8)!, mockTags.find((t) => t.id === 9)!],
+    categoryId: '2',
+    tags: [mockTags.find((t) => t.id === '6')!, mockTags.find((t) => t.id === '8')!, mockTags.find((t) => t.id === '9')!],
     viewCount: 10240,
     likeCount: 326,
-    commentCount: 45,
     status: 1,
     content: `# ${'Spring Boot 3 项目从 0 到 1：构建一个高性能 REST API'}\n\n${mdIntro}${mdBody}`,
     createTime: days(3),
     updateTime: days(1)
   },
   {
-    id: 2,
+    id: '2',
     title: 'FFmpeg 入门到精通：转码、滤镜与 SDK 开发',
     summary: '从命令行到 C API，系统梳理 FFmpeg 的核心概念、常用命令、转码流程与工程实践，快速上手音视频处理。',
     cover: 'https://picsum.photos/seed/ffmpeg/800/450',
-    categoryId: 4,
-    tags: [mockTags.find((t) => t.id === 1)!, mockTags.find((t) => t.id === 5)!],
+    categoryId: '4',
+    tags: [mockTags.find((t) => t.id === '1')!, mockTags.find((t) => t.id === '5')!],
     viewCount: 8215,
     likeCount: 258,
-    commentCount: 33,
     status: 1,
     content: `# ${'FFmpeg 入门到精通：转码、滤镜与 SDK 开发'}\n\n## 阅读引导\n\n本文适合有基本 Linux 基础、想进入音视频方向的开发者。\n${mdFFmpeg}`,
     createTime: days(7),
     updateTime: days(5)
   },
   {
-    id: 3,
+    id: '3',
     title: 'YOLO 目标检测部署实战：从训练到 TensorRT 加速',
     summary: '完整记录 YOLOv8 从数据准备、训练、ONNX 导出到 TensorRT FP16 加速部署的全流程，附性能对比数据。',
     cover: 'https://picsum.photos/seed/yolo/800/450',
-    categoryId: 3,
-    tags: [mockTags.find((t) => t.id === 3)!, mockTags.find((t) => t.id === 4)!, mockTags.find((t) => t.id === 2)!],
+    categoryId: '3',
+    tags: [mockTags.find((t) => t.id === '3')!, mockTags.find((t) => t.id === '4')!, mockTags.find((t) => t.id === '2')!],
     viewCount: 15680,
     likeCount: 512,
-    commentCount: 78,
     status: 1,
     content: `# ${'YOLO 目标检测部署实战：从训练到 TensorRT 加速'}\n\n## 阅读引导\n\n本文为 AI 推理部署方向的长文，建议收藏后分段阅读。\n${mdYolo}`,
     createTime: days(12),
     updateTime: days(10)
   },
   {
-    id: 4,
+    id: '4',
     title: 'OpenCV 图像处理入门与实战：从像素到运动检测',
     summary: '掌握 OpenCV 核心 API，用 Python 与 C++ 双语言实现图像基础操作、视频流处理与运动检测实战案例。',
     cover: 'https://picsum.photos/seed/opencv/800/450',
-    categoryId: 3,
-    tags: [mockTags.find((t) => t.id === 2)!],
+    categoryId: '3',
+    tags: [mockTags.find((t) => t.id === '2')!],
     viewCount: 6532,
     likeCount: 189,
-    commentCount: 21,
     status: 1,
     content: `# ${'OpenCV 图像处理入门与实战'}\n\n## 阅读引导\n\n本文示例包含 Python 与 C++ 两套实现，可按需选择。\n${mdOpenCV}`,
     createTime: days(18),
     updateTime: days(15)
   },
   {
-    id: 5,
+    id: '5',
     title: '现代 C++ 核心特性详解与工程实践',
     summary: '梳理智能指针、RAII、std::optional 等现代 C++ 核心特性，结合工程案例给出高性能代码实践建议。',
     cover: 'https://picsum.photos/seed/cpp/800/450',
-    categoryId: 1,
-    tags: [mockTags.find((t) => t.id === 12)!],
+    categoryId: '1',
+    tags: [mockTags.find((t) => t.id === '12')!],
     viewCount: 4860,
     likeCount: 145,
-    commentCount: 17,
     status: 1,
     content: `# ${'现代 C++ 核心特性详解与工程实践'}\n\n## 阅读引导\n\n本文面向已有 C 语言基础、希望系统学习现代 C++ 的开发者。\n${mdCpp}`,
     createTime: days(24),
     updateTime: days(20)
   },
   {
-    id: 6,
+    id: '6',
     title: 'Linux 服务器常用运维手册：诊断与安全加固',
     summary: '从系统信息、磁盘、网络到日志分析，整理高频运维场景与安全加固要点，助你高效排查线上问题。',
     cover: 'https://picsum.photos/seed/linux/800/450',
-    categoryId: 5,
-    tags: [mockTags.find((t) => t.id === 10)!, mockTags.find((t) => t.id === 11)!],
+    categoryId: '5',
+    tags: [mockTags.find((t) => t.id === '10')!, mockTags.find((t) => t.id === '11')!],
     viewCount: 7421,
     likeCount: 203,
-    commentCount: 28,
     status: 1,
     content: `# ${'Linux 服务器常用运维手册'}\n\n## 阅读引导\n\n建议把本文当作速查手册使用，Ctrl+F 快速定位场景。\n${mdLinux}`,
     createTime: days(32),
     updateTime: days(28)
   },
   {
-    id: 7,
+    id: '7',
     title: '高可用架构设计：从单机到集群的演进之路',
     summary: '梳理架构演进的几个关键阶段，涵盖读写分离、缓存、微服务、稳定性保障与容量规划方法。',
     cover: 'https://picsum.photos/seed/arch/800/450',
-    categoryId: 6,
-    tags: [mockTags.find((t) => t.id === 10)!, mockTags.find((t) => t.id === 12)!],
+    categoryId: '6',
+    tags: [mockTags.find((t) => t.id === '10')!, mockTags.find((t) => t.id === '12')!],
     viewCount: 9134,
     likeCount: 287,
-    commentCount: 52,
     status: 1,
     content: `# ${'高可用架构设计：从单机到集群的演进之路'}\n\n## 阅读引导\n\n本文偏架构设计方法论，阅读前建议了解基本的 Web 开发。\n${mdArchitecture}`,
     createTime: days(45),
     updateTime: days(40)
   },
   {
-    id: 8,
+    id: '8',
     title: '缓存一致性实战：从缓存击穿到双写一致',
     summary: '深入剖析缓存穿透、击穿、雪崩三大问题，给出互斥重建、逻辑过期等解决方案与前端配合的最佳实践。',
     cover: 'https://picsum.photos/seed/cache/800/450',
-    categoryId: 6,
-    tags: [mockTags.find((t) => t.id === 9)!, mockTags.find((t) => t.id === 12)!],
+    categoryId: '6',
+    tags: [mockTags.find((t) => t.id === '9')!, mockTags.find((t) => t.id === '12')!],
     viewCount: 11890,
     likeCount: 402,
-    commentCount: 61,
     status: 1,
     content: `# ${'缓存一致性实战：从缓存击穿到双写一致'}\n\n## 阅读引导\n\n本文结合 Redis 与 MySQL 讲解，适合后端进阶开发者。\n${mdBody}`,
     createTime: days(60),
     updateTime: days(55)
   },
   {
-    id: 9,
+    id: '9',
     title: '基于 GB28181 的国标流媒体接入实践',
     summary: '解析 GB28181 协议的信令流程与媒体传输，分享服务端接入、录像回放与 Web 播放落地方案。',
     cover: 'https://picsum.photos/seed/gb28181/800/450',
-    categoryId: 4,
-    tags: [mockTags.find((t) => t.id === 5)!, mockTags.find((t) => t.id === 1)!],
+    categoryId: '4',
+    tags: [mockTags.find((t) => t.id === '5')!, mockTags.find((t) => t.id === '1')!],
     viewCount: 5230,
     likeCount: 168,
-    commentCount: 19,
     status: 1,
     content: `# ${'基于 GB28181 的国标流媒体接入实践'}\n\n## 阅读引导\n\n本文面向安防、物联网音视频方向开发者。\n${mdFFmpeg}`,
     createTime: days(75),
     updateTime: days(70)
   },
   {
-    id: 10,
+    id: '10',
     title: 'Vue3 + Vite 工程化实践：构建可维护的前端项目',
     summary: '从项目脚手架、目录规范到组合式 API 与状态管理，分享 Vue3 大型前端项目的工程化实践心得。',
     cover: 'https://picsum.photos/seed/vue/800/450',
-    categoryId: 6,
-    tags: [mockTags.find((t) => t.id === 7)!],
+    categoryId: '6',
+    tags: [mockTags.find((t) => t.id === '7')!],
     viewCount: 6930,
     likeCount: 231,
-    commentCount: 36,
     status: 1,
     content: `# ${'Vue3 + Vite 工程化实践'}\n\n## 阅读引导\n\n本文面向前端开发者，与后端读者亦可了解前端最佳实践。\n${mdIntro}${mdBody}`,
     createTime: days(90),
     updateTime: days(85)
   },
   {
-    id: 11,
+    id: '11',
     title: '草稿示例：深入理解 MySQL 索引优化（未发布）',
     summary: '从 B+ 树结构出发，讲解联合索引、覆盖索引与回表原理，并提供 EXPLAIN 分析实战。',
     cover: 'https://picsum.photos/seed/mysql/800/450',
-    categoryId: 2,
-    tags: [mockTags.find((t) => t.id === 8)!],
+    categoryId: '2',
+    tags: [mockTags.find((t) => t.id === '8')!],
     viewCount: 0,
     likeCount: 0,
-    commentCount: 0,
     status: 0,
     content: `# ${'深入理解 MySQL 索引优化'}\n\n（草稿）本文仍在撰写中，敬请期待。\n${mdIntro}`,
     createTime: days(5),
@@ -919,7 +908,7 @@ export const mockArticles: ArticleDetail[] = [
 
 export const mockProjects: Project[] = [
   {
-    id: 1,
+    id: '1',
     name: 'SmartStream 国标流媒体网关',
     description: '基于 GB28181 与 WebRTC 的高性能流媒体接入网关，支持设备接入、HLS/FLV 直播、录像回放与 Web 端低延迟播放。',
     technology: 'C++, FFmpeg, WebRTC, Redis, Nginx',
@@ -930,7 +919,7 @@ export const mockProjects: Project[] = [
     createTime: days(120)
   },
   {
-    id: 2,
+    id: '2',
     name: 'VisionBox 目标检测服务',
     description: '面向工业质检场景的目标检测服务，基于 YOLOv8 + TensorRT 加速，提供 HTTP/gRPC 双协议推理接口与结果可视化。',
     technology: 'Python, PyTorch, TensorRT, FastAPI, Docker',
@@ -941,7 +930,7 @@ export const mockProjects: Project[] = [
     createTime: days(200)
   },
   {
-    id: 3,
+    id: '3',
     name: 'BlogCloud 个人博客平台',
     description: '前后端分离的个人技术博客系统，前台支持 Markdown 渲染、自动目录与全文搜索，后台提供文章、分类、标签与评论管理。',
     technology: 'Vue3, TypeScript, Spring Boot, MyBatis-Plus, MySQL, Redis',
@@ -952,7 +941,7 @@ export const mockProjects: Project[] = [
     createTime: days(260)
   },
   {
-    id: 4,
+    id: '4',
     name: 'DevOpsKit 服务器运维工具箱',
     description: '开箱即用的服务器巡检与自动化运维工具集，支持资源监控、日志分析与一键部署脚本生成。',
     technology: 'Go, Vue3, Shell, Grafana',
@@ -962,3 +951,19 @@ export const mockProjects: Project[] = [
     createTime: days(300)
   }
 ]
+
+export const mockProfile: Profile = {
+  nickname: 'DevPanda',
+  avatar: 'https://api.dicebear.com/9.x/notionists/svg?seed=panda',
+  tagline: '全栈工程师 · 音视频 / AI / 后端架构',
+  bio: '拥有 8 年全栈开发经验，先后负责流媒体网关、AI 推理平台与高并发后端系统的设计与落地。热爱技术分享，坚信最好的学习方式是写出来。业余时间维护开源项目、撰写技术博客，乐于通过文字帮助更多开发者。',
+  tags: ['音视频', 'AI 推理', '高并发', 'DevOps', '开源爱好者', '技术写作'],
+  email: 'devpanda@example.com',
+  location: '杭州 · 可远程办公',
+  socials: [
+    { name: 'GitHub', icon: 'Link', url: 'https://github.com/devpanda' },
+    { name: 'Gitee', icon: 'Position', url: 'https://gitee.com/devpanda' },
+    { name: '掘金', icon: 'EditPen', url: 'https://juejin.cn/user/devpanda' },
+    { name: '邮箱', icon: 'Message', url: 'mailto:devpanda@example.com' }
+  ]
+}

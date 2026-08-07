@@ -14,6 +14,17 @@
         <ProjectCard v-for="project in projects" :key="project.id" :project="project" />
       </div>
     </div>
+
+    <div v-if="total > 0" class="mt-10 flex justify-center">
+      <el-pagination
+        background
+        layout="prev, pager, next, total"
+        :total="total"
+        :page-size="pageSize"
+        :current-page="page"
+        @current-change="handlePageChange"
+      />
+    </div>
   </div>
 </template>
 
@@ -25,13 +36,26 @@ import type { Project } from '@/types'
 
 const loading = ref(false)
 const projects = ref<Project[]>([])
+const total = ref(0)
+const page = ref(1)
+const pageSize = 6
 
-onMounted(async () => {
+async function fetchData() {
   loading.value = true
   try {
-    projects.value = await projectApi.getList()
+    const res = await projectApi.getList({ current: page.value, size: pageSize })
+    projects.value = res.records
+    total.value = res.total
   } finally {
     loading.value = false
   }
-})
+}
+
+async function handlePageChange(p: number) {
+  page.value = p
+  await fetchData()
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+onMounted(fetchData)
 </script>

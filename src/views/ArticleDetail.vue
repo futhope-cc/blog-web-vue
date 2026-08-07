@@ -126,7 +126,7 @@ const profile = {
   tagline: '全栈工程师'
 }
 
-const articleId = computed(() => Number(route.params.id))
+const articleId = computed(() => String(route.params.id))
 
 async function fetchDetail() {
   loading.value = true

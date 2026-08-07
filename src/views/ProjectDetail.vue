@@ -80,7 +80,7 @@ const techList = computed(() =>
 onMounted(async () => {
   loading.value = true
   try {
-    project.value = await projectApi.getDetail(Number(route.params.id))
+    project.value = await projectApi.getDetail(String(route.params.id))
   } finally {
     loading.value = false
   }

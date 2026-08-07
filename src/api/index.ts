@@ -5,7 +5,9 @@ import type {
   ArticleQuery,
   Category,
   PageResult,
+  Profile,
   Project,
+  ProjectQuery,
   Tag
 } from '@/types'
 
@@ -13,7 +15,7 @@ export const articleApi = {
   getList(query: ArticleQuery) {
     return request<PageResult<ArticleListItem>>({ url: '/article/list', method: 'get', params: query })
   },
-  getDetail(id: number) {
+  getDetail(id: string) {
     return request<ArticleDetail>({ url: `/article/${id}`, method: 'get' })
   }
 }
@@ -31,10 +33,16 @@ export const tagApi = {
 }
 
 export const projectApi = {
-  getList() {
-    return request<Project[]>({ url: '/project/list', method: 'get' })
+  getList(query: ProjectQuery) {
+    return request<PageResult<Project>>({ url: '/project/list', method: 'get', params: query })
   },
-  getDetail(id: number) {
+  getDetail(id: string) {
     return request<Project>({ url: `/project/${id}`, method: 'get' })
+  }
+}
+
+export const profileApi = {
+  getProfile() {
+    return request<Profile>({ url: '/profile', method: 'get' })
   }
 }

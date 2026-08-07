@@ -39,12 +39,12 @@
           <h1 class="text-4xl md:text-5xl font-bold text-white leading-tight">
             Hi, 我是
             <span class="bg-gradient-to-r from-cyan-300 via-violet-300 to-fuchsia-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(167,139,250,0.55)]">
-              {{ profile.nickname }}
+              {{ profile?.nickname }}
             </span>
           </h1>
-          <p class="mt-4 text-lg md:text-xl text-slate-200 leading-relaxed">{{ profile.slogan }}</p>
+          <p class="mt-4 text-lg md:text-xl text-slate-200 leading-relaxed">{{ profile?.tagline }}</p>
           <p class="mt-3 text-slate-400 leading-relaxed max-w-xl mx-auto md:mx-0">
-            {{ profile.bio }}
+            {{ profile?.bio }}
           </p>
 
           <div class="mt-8 flex flex-wrap gap-3 justify-center md:justify-start">
@@ -70,10 +70,10 @@
             <div class="absolute -inset-8 rounded-full bg-violet-600/30 blur-3xl"></div>
             <div class="sci-ring absolute" aria-hidden="true"></div>
             <div class="absolute -inset-3 rounded-full border border-dashed border-violet-400/30 animate-[spin_24s_linear_infinite]" aria-hidden="true"></div>
-            <img :src="profile.avatar" alt="avatar"
+            <img :src="profile?.avatar" alt="avatar"
                  class="relative w-48 h-48 md:w-56 md:h-56 rounded-full border-2 border-violet-300/40 object-cover bg-[#0d0730] shadow-[0_0_50px_rgba(124,58,237,0.45)]" />
             <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-[#120a2e]/90 border border-violet-400/50 text-xs font-medium text-violet-100 backdrop-blur whitespace-nowrap">
-              {{ profile.tagline }}
+              {{ profile?.location }}
             </div>
           </div>
         </div>
@@ -146,16 +146,16 @@
           <h2 class="text-3xl font-bold">有兴趣一起交流吗？</h2>
           <p class="mt-3 text-indigo-100">无论是技术讨论、项目合作，还是面试邀请，都欢迎随时联系我。</p>
           <div class="mt-8 flex flex-wrap gap-4 justify-center">
-            <a href="mailto:devpanda@example.com"
+            <a :href="'mailto:' + (profile?.email || '')"
                class="px-6 py-3 rounded-xl bg-white text-indigo-700 font-semibold hover:bg-indigo-50 transition-colors flex items-center gap-2">
               <el-icon><Message /></el-icon> 发送邮件
             </a>
-            <a href="https://github.com/devpanda" target="_blank" rel="noopener"
+            <a :href="githubUrl" target="_blank" rel="noopener"
                class="px-6 py-3 rounded-xl bg-white/15 border border-white/30 hover:bg-white/25 transition-colors flex items-center gap-2">
               <el-icon><Link /></el-icon> GitHub
             </a>
           </div>
-          <p class="mt-6 text-sm text-indigo-200">或直接发送邮件至 devpanda@example.com</p>
+          <p class="mt-6 text-sm text-indigo-200">或直接发送邮件至 {{ profile?.email }}</p>
         </div>
         </div>
       </div>
@@ -164,28 +164,19 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import ArticleCard from '@/components/ArticleCard.vue'
-import { articleApi, projectApi } from '@/api'
-import type { ArticleListItem, Project } from '@/types'
+import { articleApi, profileApi, projectApi } from '@/api'
+import type { ArticleListItem, Profile, Project } from '@/types'
 
 const router = useRouter()
 
-const profile = {
-  nickname: 'DevPanda',
-  avatar: 'https://api.dicebear.com/9.x/notionists/svg?seed=panda',
-  tagline: '全栈工程师',
-  slogan: '用代码构建有趣且有用的东西',
-  bio: '专注音视频、AI 推理与高可用后端架构，热衷把复杂的技术讲得简单。'
-}
-
-const socials = [
-  { name: 'GitHub', icon: 'Link', url: 'https://github.com/devpanda' },
-  { name: 'Gitee', icon: 'Position', url: 'https://gitee.com/devpanda' },
-  { name: '掘金', icon: 'EditPen', url: 'https://juejin.cn/user/devpanda' },
-  { name: '邮箱', icon: 'Message', url: 'mailto:devpanda@example.com' }
-]
+const profile = ref<Profile | null>(null)
+const socials = computed(() => profile.value?.socials ?? [])
+const githubUrl = computed(
+  () => profile.value?.socials.find((s) => s.name === 'GitHub')?.url || 'https://github.com'
+)
 
 const loadingArticles = ref(true)
 const latestArticles = ref<ArticleListItem[]>([])
@@ -193,12 +184,14 @@ const featuredProjects = ref<Project[]>([])
 
 onMounted(async () => {
   try {
-    const [articleRes, projectRes] = await Promise.all([
-      articleApi.getList({ page: 1, pageSize: 6 }),
-      projectApi.getList()
+    const [profileRes, articleRes, projectRes] = await Promise.all([
+      profileApi.getProfile(),
+      articleApi.getList({ current: 1, size: 6 }),
+      projectApi.getList({ current: 1, size: 4, featured: 1 })
     ])
-    latestArticles.value = articleRes.list
-    featuredProjects.value = projectRes.filter((p) => p.featured === 1).slice(0, 4)
+    profile.value = profileRes
+    latestArticles.value = articleRes.records
+    featuredProjects.value = projectRes.records
   } finally {
     loadingArticles.value = false
   }

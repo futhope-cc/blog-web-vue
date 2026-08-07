@@ -91,21 +91,21 @@ const total = ref(0)
 const page = ref(1)
 const pageSize = 9
 
-const categoryId = ref<number | undefined>(route.query.categoryId ? Number(route.query.categoryId) : undefined)
-const tagId = ref<number | undefined>(route.query.tagId ? Number(route.query.tagId) : undefined)
+const categoryId = ref<string | undefined>(route.query.categoryId ? String(route.query.categoryId) : undefined)
+const tagId = ref<string | undefined>(route.query.tagId ? String(route.query.tagId) : undefined)
 const keyword = ref<string>(String(route.query.keyword || ''))
 
 async function fetchData() {
   loading.value = true
   try {
     const res = await articleApi.getList({
-      page: page.value,
-      pageSize,
+      current: page.value,
+      size: pageSize,
       categoryId: categoryId.value,
       tagId: tagId.value,
       keyword: keyword.value
     })
-    articles.value = res.list
+    articles.value = res.records
     total.value = res.total
   } finally {
     loading.value = false
@@ -117,7 +117,7 @@ async function handleFilterChange() {
   syncQuery()
 }
 
-async function handleTagClick(id: number) {
+async function handleTagClick(id: string) {
   tagId.value = tagId.value === id ? undefined : id
   page.value = 1
   syncQuery()
@@ -146,8 +146,8 @@ function syncQuery() {
 watch(
   () => route.query,
   () => {
-    categoryId.value = route.query.categoryId ? Number(route.query.categoryId) : undefined
-    tagId.value = route.query.tagId ? Number(route.query.tagId) : undefined
+    categoryId.value = route.query.categoryId ? String(route.query.categoryId) : undefined
+    tagId.value = route.query.tagId ? String(route.query.tagId) : undefined
     keyword.value = String(route.query.keyword || '')
     page.value = route.query.page ? Number(route.query.page) : 1
     fetchData()

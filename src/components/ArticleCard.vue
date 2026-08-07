@@ -55,7 +55,6 @@
         <div class="flex items-center gap-3">
           <span class="flex items-center gap-1"><el-icon :size="13"><View /></el-icon>{{ formatCount(article.viewCount) }}</span>
           <span class="flex items-center gap-1"><el-icon :size="13"><Star /></el-icon>{{ formatCount(article.likeCount) }}</span>
-          <span class="flex items-center gap-1"><el-icon :size="13"><ChatDotRound /></el-icon>{{ formatCount(article.commentCount) }}</span>
         </div>
       </div>
     </div>

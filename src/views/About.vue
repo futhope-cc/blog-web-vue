@@ -1,10 +1,10 @@
 <template>
   <div class="max-w-6xl mx-auto px-4 py-10">
     <div class="mb-10 flex items-center gap-6">
-      <img :src="profile.avatar" alt="avatar" class="w-24 h-24 rounded-3xl shadow-lg border-4 border-white" />
+      <img :src="profile?.avatar" alt="avatar" class="w-24 h-24 rounded-3xl shadow-lg border-4 border-white" />
       <div>
-        <h1 class="text-3xl font-bold text-slate-800">{{ profile.nickname }}</h1>
-        <p class="mt-1 text-slate-500">{{ profile.tagline }}</p>
+        <h1 class="text-3xl font-bold text-slate-800">{{ profile?.nickname }}</h1>
+        <p class="mt-1 text-slate-500">{{ profile?.tagline }}</p>
         <div class="mt-3 flex gap-3">
           <a v-for="s in socials" :key="s.name" :href="s.url" target="_blank" rel="noopener"
              class="w-9 h-9 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary transition-colors">
@@ -20,9 +20,9 @@
         <div class="w-1 h-6 rounded bg-primary"></div>
         <h2 class="text-xl font-bold text-slate-800">个人简介</h2>
       </div>
-      <p class="text-slate-600 leading-loose">{{ profile.bio }}</p>
+      <p class="text-slate-600 leading-loose">{{ profile?.bio }}</p>
       <div class="mt-4 flex flex-wrap gap-2">
-        <el-tag v-for="t in profile.tags" :key="t" effect="plain" round>{{ t }}</el-tag>
+        <el-tag v-for="t in profile?.tags || []" :key="t" effect="plain" round>{{ t }}</el-tag>
       </div>
     </section>
 
@@ -93,13 +93,13 @@
         <h2 class="text-xl font-bold text-white">联系方式</h2>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <a href="mailto:devpanda@example.com"
+        <a :href="'mailto:' + (profile?.email || '')"
            class="rounded-xl bg-white/10 border border-white/20 p-5 hover:bg-white/20 transition-colors text-white">
           <el-icon :size="24"><Message /></el-icon>
           <p class="mt-3 font-semibold">Email</p>
-          <p class="text-sm text-indigo-100 mt-1 break-all">devpanda@example.com</p>
+          <p class="text-sm text-indigo-100 mt-1 break-all">{{ profile?.email }}</p>
         </a>
-        <a href="https://github.com/devpanda" target="_blank" rel="noopener"
+        <a :href="githubUrl" target="_blank" rel="noopener"
            class="rounded-xl bg-white/10 border border-white/20 p-5 hover:bg-white/20 transition-colors text-white">
           <el-icon :size="24"><Link /></el-icon>
           <p class="mt-3 font-semibold">GitHub</p>
@@ -108,7 +108,7 @@
         <div class="rounded-xl bg-white/10 border border-white/20 p-5 text-white">
           <el-icon :size="24"><Place /></el-icon>
           <p class="mt-3 font-semibold">所在地</p>
-          <p class="text-sm text-indigo-100 mt-1">杭州 · 可远程办公</p>
+          <p class="text-sm text-indigo-100 mt-1">{{ profile?.location }}</p>
         </div>
       </div>
     </section>
@@ -116,28 +116,19 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { projectApi } from '@/api'
-import type { Project } from '@/types'
+import { profileApi, projectApi } from '@/api'
+import type { Profile, Project } from '@/types'
 import { formatDate } from '@/utils'
 
 const router = useRouter()
 
-const profile = {
-  nickname: 'DevPanda',
-  avatar: 'https://api.dicebear.com/9.x/notionists/svg?seed=panda',
-  tagline: '全栈工程师 · 音视频 / AI / 后端架构',
-  bio: '拥有 8 年全栈开发经验，先后负责流媒体网关、AI 推理平台与高并发后端系统的设计与落地。热爱技术分享，坚信最好的学习方式是写出来。业余时间维护开源项目、撰写技术博客，乐于通过文字帮助更多开发者。',
-  tags: ['音视频', 'AI 推理', '高并发', 'DevOps', '开源爱好者', '技术写作']
-}
-
-const socials = [
-  { name: 'GitHub', icon: 'Link', url: 'https://github.com/devpanda' },
-  { name: 'Gitee', icon: 'Position', url: 'https://gitee.com/devpanda' },
-  { name: '掘金', icon: 'EditPen', url: 'https://juejin.cn/user/devpanda' },
-  { name: '邮箱', icon: 'Message', url: 'mailto:devpanda@example.com' }
-]
+const profile = ref<Profile | null>(null)
+const socials = computed(() => profile.value?.socials ?? [])
+const githubUrl = computed(
+  () => profile.value?.socials.find((s) => s.name === 'GitHub')?.url || 'https://github.com'
+)
 
 const directions = [
   { title: '音视频技术', icon: 'Film', desc: '深耕 FFmpeg 转码、WebRTC 低延迟传输、GB28181 国标接入与流媒体网关架构。' },
@@ -170,6 +161,11 @@ const workExperience = [
 const projects = ref<Project[]>([])
 
 onMounted(async () => {
-  projects.value = await projectApi.getList()
+  const [profileRes, projectRes] = await Promise.all([
+    profileApi.getProfile(),
+    projectApi.getList({ current: 1, size: 10 })
+  ])
+  profile.value = profileRes
+  projects.value = projectRes.records
 })
 </script>

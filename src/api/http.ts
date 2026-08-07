@@ -27,7 +27,7 @@ export async function request<T = unknown>(config: AxiosRequestConfig): Promise<
   try {
     const response = await http.request<ApiResponse<T>>(config)
     const body = response.data
-    if (body.code !== 200) {
+    if (body.code !== 0) {
       const message = body.message || '请求失败'
       ElMessage.error(message)
       throw new Error(message)

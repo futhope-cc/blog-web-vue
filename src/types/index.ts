@@ -1,5 +1,5 @@
 export interface Category {
-  id: number
+  id: string
   name: string
   sort: number
   articleCount?: number
@@ -7,22 +7,21 @@ export interface Category {
 }
 
 export interface Tag {
-  id: number
+  id: string
   name: string
   articleCount?: number
 }
 
 export interface ArticleListItem {
-  id: number
+  id: string
   title: string
   summary: string
   cover: string
-  categoryId: number
+  categoryId: string
   categoryName?: string
   tags: Tag[]
   viewCount: number
   likeCount: number
-  commentCount: number
   status: number
   createTime: string
   updateTime?: string
@@ -33,22 +32,22 @@ export interface ArticleDetail extends ArticleListItem {
 }
 
 export interface PageResult<T> {
-  list: T[]
+  records: T[]
   total: number
-  page: number
-  pageSize: number
+  current: number
+  size: number
 }
 
 export interface ArticleQuery {
-  page: number
-  pageSize: number
-  categoryId?: number
-  tagId?: number
+  current: number
+  size: number
+  categoryId?: string
+  tagId?: string
   keyword?: string
 }
 
 export interface Project {
-  id: number
+  id: string
   name: string
   description: string
   technology: string
@@ -57,4 +56,28 @@ export interface Project {
   deployment?: string
   featured?: number
   createTime: string
+}
+
+export interface ProjectQuery {
+  current: number
+  size: number
+  featured?: number
+  keyword?: string
+}
+
+export interface SocialLink {
+  name: string
+  icon?: string
+  url: string
+}
+
+export interface Profile {
+  nickname: string
+  avatar: string
+  tagline: string
+  bio: string
+  tags: string[]
+  email: string
+  location: string
+  socials: SocialLink[]
 }

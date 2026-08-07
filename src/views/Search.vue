@@ -112,8 +112,8 @@ async function doSearch() {
   loading.value = true
   page.value = 1
   try {
-    const res = await articleApi.getList({ page: 1, pageSize, keyword: kw })
-    results.value = res.list
+    const res = await articleApi.getList({ current: 1, size: pageSize, keyword: kw })
+    results.value = res.records
     total.value = res.total
     lastKeyword.value = kw
     searched.value = true
@@ -126,8 +126,8 @@ async function handlePageChange(p: number) {
   page.value = p
   loading.value = true
   try {
-    const res = await articleApi.getList({ page: p, pageSize, keyword: lastKeyword.value })
-    results.value = res.list
+    const res = await articleApi.getList({ current: p, size: pageSize, keyword: lastKeyword.value })
+    results.value = res.records
     window.scrollTo({ top: 0, behavior: 'smooth' })
   } finally {
     loading.value = false
