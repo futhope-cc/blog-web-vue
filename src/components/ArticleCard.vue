@@ -16,7 +16,7 @@
       ]"
     >
       <img
-        :src="article.cover"
+        :src="resolveFileUrl(article.cover)"
         :alt="article.title"
         loading="lazy"
         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -39,22 +39,20 @@
 
       <div class="mt-3 flex flex-wrap gap-1.5">
         <el-tag
-          v-for="tag in article.tags.slice(0, 3)"
-          :key="tag.id"
+          v-for="tag in article.tagNames.slice(0, 3)"
+          :key="tag"
           size="small"
           effect="plain"
           :class="['!mr-0', dark ? '!bg-violet-500/10 !text-violet-200 !border-violet-400/30' : '']"
-          @click="router.push({ path: '/articles', query: { tagId: tag.id } })"
         >
-          {{ tag.name }}
+          {{ tag }}
         </el-tag>
       </div>
 
       <div :class="['mt-4 pt-3 flex items-center justify-between text-xs', dark ? 'border-t border-violet-400/10 text-slate-400' : 'border-t border-slate-100 text-slate-400']">
-        <span>{{ timeAgo(article.createTime) }}</span>
+        <span>{{ timeAgo(article.publishTime || article.createTime) }}</span>
         <div class="flex items-center gap-3">
           <span class="flex items-center gap-1"><el-icon :size="13"><View /></el-icon>{{ formatCount(article.viewCount) }}</span>
-          <span class="flex items-center gap-1"><el-icon :size="13"><Star /></el-icon>{{ formatCount(article.likeCount) }}</span>
         </div>
       </div>
     </div>
@@ -62,13 +60,10 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import type { ArticleListItem } from '@/types'
-import { timeAgo } from '@/utils'
+import { resolveFileUrl, timeAgo } from '@/utils'
 
 defineProps<{ article: ArticleListItem; dark?: boolean; tall?: boolean }>()
-
-const router = useRouter()
 
 function formatCount(n: number) {
   if (n >= 10000) return `${(n / 10000).toFixed(1)}w`

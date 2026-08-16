@@ -7,7 +7,7 @@
 
       <div v-if="project">
         <div class="rounded-3xl overflow-hidden shadow-lg bg-white">
-          <img :src="project.image" :alt="project.name" class="w-full h-72 md:h-96 object-cover" />
+          <img :src="resolveFileUrl(project.image)" :alt="project.name" class="w-full h-72 md:h-96 object-cover" />
           <div class="p-8 md:p-10">
             <div class="flex items-start justify-between gap-4 flex-wrap">
               <div>
@@ -65,7 +65,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { projectApi } from '@/api'
 import type { Project } from '@/types'
-import { formatDate } from '@/utils'
+import { formatDate, resolveFileUrl } from '@/utils'
 
 const route = useRoute()
 const router = useRouter()

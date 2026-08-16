@@ -2,33 +2,33 @@ export interface Category {
   id: string
   name: string
   sort: number
-  articleCount?: number
-  createTime: string
+  articleCount: number
 }
 
 export interface Tag {
   id: string
   name: string
-  articleCount?: number
+  articleCount: number
 }
 
 export interface ArticleListItem {
   id: string
   title: string
   summary: string
-  cover: string
+  cover?: string
   categoryId: string
   categoryName?: string
-  tags: Tag[]
+  tagNames: string[]
   viewCount: number
-  likeCount: number
   status: number
+  publishTime?: string
   createTime: string
-  updateTime?: string
 }
 
 export interface ArticleDetail extends ArticleListItem {
   content: string
+  tagIds: string[]
+  updateTime?: string
 }
 
 export interface PageResult<T> {
@@ -67,17 +67,32 @@ export interface ProjectQuery {
 
 export interface SocialLink {
   name: string
-  icon?: string
   url: string
 }
 
+export interface TechDirection {
+  title: string
+  icon?: string
+  desc: string
+}
+
+export interface WorkExperience {
+  company: string
+  position: string
+  period: string
+  desc: string
+}
+
 export interface Profile {
+  id: string
   nickname: string
-  avatar: string
-  tagline: string
+  avatar?: string
   bio: string
-  tags: string[]
-  email: string
-  location: string
-  socials: SocialLink[]
+  techStack?: string
+  socialLinks?: string
+  email?: string
+  github?: string
+  directions?: string
+  workExperience?: string
+  updateTime: string
 }

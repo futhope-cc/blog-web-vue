@@ -42,7 +42,7 @@
               {{ profile?.nickname }}
             </span>
           </h1>
-          <p class="mt-4 text-lg md:text-xl text-slate-200 leading-relaxed">{{ profile?.tagline }}</p>
+          <p class="mt-4 text-lg md:text-xl text-slate-200 leading-relaxed">{{ profileTagline(profile) }}</p>
           <p class="mt-3 text-slate-400 leading-relaxed max-w-xl mx-auto md:mx-0">
             {{ profile?.bio }}
           </p>
@@ -60,7 +60,7 @@
             <a v-for="s in socials" :key="s.name" :href="s.url" target="_blank" rel="noopener"
                class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 transition-all hover:border-cyan-400/60 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(34,211,238,0.3)]"
                :title="s.name">
-              <el-icon :size="20"><component :is="s.icon" /></el-icon>
+              <el-icon :size="20"><component :is="socialIcon(s.name)" /></el-icon>
             </a>
           </div>
         </div>
@@ -70,11 +70,8 @@
             <div class="absolute -inset-8 rounded-full bg-violet-600/30 blur-3xl"></div>
             <div class="sci-ring absolute" aria-hidden="true"></div>
             <div class="absolute -inset-3 rounded-full border border-dashed border-violet-400/30 animate-[spin_24s_linear_infinite]" aria-hidden="true"></div>
-            <img :src="profile?.avatar" alt="avatar"
+            <img :src="resolveAvatar(profile?.avatar)" alt="avatar"
                  class="relative w-48 h-48 md:w-56 md:h-56 rounded-full border-2 border-violet-300/40 object-cover bg-[#0d0730] shadow-[0_0_50px_rgba(124,58,237,0.45)]" />
-            <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-[#120a2e]/90 border border-violet-400/50 text-xs font-medium text-violet-100 backdrop-blur whitespace-nowrap">
-              {{ profile?.location }}
-            </div>
           </div>
         </div>
       </div>
@@ -118,7 +115,7 @@
                class="group bg-slate-800/80 rounded-2xl overflow-hidden border border-slate-700/60 hover:border-indigo-500/60 hover:shadow-xl hover:shadow-indigo-500/10 transition-all cursor-pointer"
                @click="router.push(`/project/${project.id}`)">
             <div class="relative overflow-hidden h-36">
-              <img :src="project.image" :alt="project.name" loading="lazy"
+              <img :src="resolveFileUrl(project.image)" :alt="project.name" loading="lazy"
                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
               <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 to-transparent"></div>
             </div>
@@ -169,14 +166,13 @@ import { useRouter } from 'vue-router'
 import ArticleCard from '@/components/ArticleCard.vue'
 import { articleApi, profileApi, projectApi } from '@/api'
 import type { ArticleListItem, Profile, Project } from '@/types'
+import { buildSocials, profileTagline, resolveAvatar, resolveFileUrl, socialIcon } from '@/utils'
 
 const router = useRouter()
 
 const profile = ref<Profile | null>(null)
-const socials = computed(() => profile.value?.socials ?? [])
-const githubUrl = computed(
-  () => profile.value?.socials.find((s) => s.name === 'GitHub')?.url || 'https://github.com'
-)
+const socials = computed(() => buildSocials(profile.value))
+const githubUrl = computed(() => profile.value?.github || 'https://github.com')
 
 const loadingArticles = ref(true)
 const latestArticles = ref<ArticleListItem[]>([])

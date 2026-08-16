@@ -11,7 +11,7 @@
           <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
             <div class="flex items-center gap-2 mb-4">
               <el-tag v-if="article.categoryName" type="primary" effect="light">{{ article.categoryName }}</el-tag>
-              <span class="text-sm text-slate-400">{{ formatDate(article.createTime) }}</span>
+              <span class="text-sm text-slate-400">{{ formatDate(article.publishTime || article.createTime) }}</span>
               <span class="text-xs text-slate-300">·</span>
               <span class="flex items-center gap-1 text-sm text-slate-400">
                 <el-icon :size="14"><View /></el-icon> {{ article.viewCount }} 阅读
@@ -21,14 +21,14 @@
             <h1 class="text-2xl md:text-3xl font-bold text-slate-900 leading-snug">{{ article.title }}</h1>
 
             <div class="mt-4 flex items-center gap-3">
-              <img :src="profile.avatar" alt="author" class="w-10 h-10 rounded-full" />
+              <img :src="resolveAvatar(profile?.avatar)" alt="author" class="w-10 h-10 rounded-full" />
               <div>
-                <p class="text-sm font-medium text-slate-700">{{ profile.nickname }}</p>
-                <p class="text-xs text-slate-400">{{ profile.tagline }}</p>
+                <p class="text-sm font-medium text-slate-700">{{ profile?.nickname }}</p>
+                <p class="text-xs text-slate-400">{{ profileTagline(profile) }}</p>
               </div>
             </div>
 
-            <img v-if="article.cover" :src="article.cover" :alt="article.title"
+            <img v-if="article.cover" :src="resolveFileUrl(article.cover)" :alt="article.title"
                  class="mt-6 w-full rounded-xl shadow-sm object-cover max-h-80" />
           </div>
 
@@ -38,16 +38,15 @@
 
             <div class="mt-8 pt-6 border-t border-slate-100 flex flex-wrap gap-2 items-center">
               <span class="text-sm text-slate-400 mr-1">标签：</span>
-              <el-tag v-for="tag in article.tags" :key="tag.id" effect="plain"
-                      class="cursor-pointer !mr-0" @click="router.push({ path: '/articles', query: { tagId: tag.id } })">
-                {{ tag.name }}
+              <el-tag v-for="tag in article.tagNames" :key="tag" effect="plain" class="!mr-0">
+                {{ tag }}
               </el-tag>
             </div>
 
             <!-- 互动 -->
             <div class="mt-8 flex items-center justify-center gap-4">
               <el-button size="large" round :type="liked ? 'danger' : 'default'" @click="toggleLike">
-                <el-icon class="mr-1"><StarFilled /></el-icon> {{ liked ? '已点赞' : '点赞' }} {{ article.likeCount }}
+                <el-icon class="mr-1"><StarFilled /></el-icon> {{ liked ? '已点赞' : '点赞' }} {{ likeCount }}
               </el-button>
             </div>
           </div>
@@ -58,10 +57,10 @@
           <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
             <h3 class="text-sm font-bold text-slate-700 mb-3">关于作者</h3>
             <div class="flex items-center gap-3">
-              <img :src="profile.avatar" alt="author" class="w-12 h-12 rounded-full" />
+              <img :src="resolveAvatar(profile?.avatar)" alt="author" class="w-12 h-12 rounded-full" />
               <div>
-                <p class="font-medium text-slate-800 text-sm">{{ profile.nickname }}</p>
-                <p class="text-xs text-slate-400">{{ profile.tagline }}</p>
+                <p class="font-medium text-slate-800 text-sm">{{ profile?.nickname }}</p>
+                <p class="text-xs text-slate-400">{{ profileTagline(profile) }}</p>
               </div>
             </div>
             <el-button size="small" round type="primary" plain class="mt-4 w-full" @click="router.push('/about')">
@@ -106,25 +105,21 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import MarkdownViewer from '@/components/MarkdownViewer.vue'
-import { articleApi } from '@/api'
-import type { ArticleDetail } from '@/types'
-import { formatDate } from '@/utils'
+import { articleApi, profileApi } from '@/api'
+import type { ArticleDetail, Profile } from '@/types'
+import { formatDate, profileTagline, resolveAvatar, resolveFileUrl } from '@/utils'
 import type { TocItem } from '@/utils/markdown'
 
 const route = useRoute()
 const router = useRouter()
 
 const article = ref<ArticleDetail | null>(null)
+const profile = ref<Profile | null>(null)
 const loading = ref(false)
 const toc = ref<TocItem[]>([])
 const activeHeading = ref('')
 const liked = ref(false)
-
-const profile = {
-  nickname: 'DevPanda',
-  avatar: 'https://api.dicebear.com/9.x/notionists/svg?seed=panda',
-  tagline: '全栈工程师'
-}
+const likeCount = ref(0)
 
 const articleId = computed(() => String(route.params.id))
 
@@ -132,6 +127,8 @@ async function fetchDetail() {
   loading.value = true
   try {
     article.value = await articleApi.getDetail(articleId.value)
+    likeCount.value = 0
+    liked.value = false
   } finally {
     loading.value = false
   }
@@ -139,9 +136,7 @@ async function fetchDetail() {
 
 function toggleLike() {
   liked.value = !liked.value
-  if (article.value) {
-    article.value.likeCount += liked.value ? 1 : -1
-  }
+  likeCount.value += liked.value ? 1 : -1
   ElMessage.success(liked.value ? '感谢点赞！' : '已取消点赞')
 }
 
@@ -172,8 +167,9 @@ watch(
   }
 )
 
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener('scroll', onScroll, { passive: true })
+  profile.value = await profileApi.getProfile().catch(() => null)
   fetchDetail()
 })
 

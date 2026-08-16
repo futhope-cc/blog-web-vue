@@ -11,12 +11,18 @@
 
 修改后请用 `npm run typecheck` 和 `npm run build` 验证。项目没有测试套件。
 
-## 数据层：全部为 Mock
+## 数据层：调用真实后端接口
 
-- 所有 `/api` 请求都会在浏览器内被 `src/mock/index.ts` 拦截（axios 请求拦截器设置 `config.adapter`）。不会真正访问网络；`vite.config.ts` 中的 `/api` 代理目标是遗留配置。
-- Mock 状态保存在内存中，刷新页面即重置（mock 文章在详情获取时 `viewCount` 会自增）。
-- 修改站点内容（文章/分类/标签/项目）请编辑 `src/mock/data.ts`。新增接口请在 `setupMock()` 中增加分支并返回 `ok(data)` / `fail(msg, 404)`。
-- 注意：在拦截器执行时 URL 中还没有查询字符串。`setupMock` 会把 `config.params` 和 URL 查询串合并到一个 `params` 对象中——读取 `pageSize`、`page`、筛选条件、`keyword` 都要从这个合并对象中取，绝不要从 `url` 读取。
+- 所有 `/api` 请求通过 `vite.config.ts` 的 dev 代理转发到后端 `http://localhost:8081`（`/api` 是后端 context-path）。
+- 接口契约见 `docs/前后台接口整合与评审.md`，后端工程在 `D:\code\project\java\blog-server`。
+- 统一返回 `Result<T>`：`{ code, message, data }`，`code=0` 成功（见 `src/api/http.ts` 的 `request()`，非 0 会自动 ElMessage 并 throw）。分页为 `{ records, total, current, size }`。
+- 前台只读接口：`GET /article/list`、`GET /article/{id}`、`GET /category/list`、`GET /tag/list`、`GET /project/list`、`GET /project/{id}`、`GET /profile`。请求参数用 `current/size`（不是 page/pageSize）。
+- 与旧 mock 的字段差异（当前代码已按真实接口适配，改字段时注意）：
+  - 文章列表/详情没有 `tags` 对象数组和 `likeCount`，改为 `tagNames: string[]`（详情另有 `tagIds`），发布时间用 `publishTime`。
+  - 分类/标签列表无 `createTime`；分类含 `articleCount`。
+  - `/profile` 返回 `techStack`（逗号分隔字符串）、`socialLinks`（JSON 字符串）、`email`、`github`，没有 `tagline/location/socials`。展示用 `src/utils/index.ts` 中的 `parseTechStack/parseSocialLinks/buildSocials/profileTagline` 等辅助函数映射。
+  - 本地存储图片返回相对路径 `/files/...`，需经 `resolveFileUrl()` 补上 `/api` 前缀（dev 下由 `/api` 代理转发）。
+- 无后台管理页面（不登录、无写操作）。`src/mock` 目录已删除，不要再依赖 mock。
 
 ## Tailwind 未启用 preflight
 

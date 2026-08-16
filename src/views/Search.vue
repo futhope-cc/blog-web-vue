@@ -44,14 +44,14 @@
               <el-tag v-if="article.categoryName" size="small" effect="light" type="primary" class="!mr-0">
                 {{ article.categoryName }}
               </el-tag>
-              <span>{{ formatDate(article.createTime) }}</span>
+              <span>{{ formatDate(article.publishTime || article.createTime) }}</span>
               <span class="flex items-center gap-1"><el-icon :size="12"><View /></el-icon> {{ article.viewCount }}</span>
             </div>
             <h3 class="text-lg font-bold text-slate-800 hover:text-primary transition-colors">{{ article.title }}</h3>
             <p class="mt-2 text-sm text-slate-500 leading-relaxed line-clamp-2">{{ article.summary }}</p>
             <div class="mt-3 flex flex-wrap gap-1.5">
-              <el-tag v-for="tag in article.tags.slice(0, 3)" :key="tag.id" size="small" type="info" effect="plain" class="!mr-0">
-                {{ tag.name }}
+              <el-tag v-for="tag in article.tagNames.slice(0, 3)" :key="tag" size="small" type="info" effect="plain" class="!mr-0">
+                {{ tag }}
               </el-tag>
             </div>
           </div>

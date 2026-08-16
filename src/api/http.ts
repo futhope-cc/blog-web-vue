@@ -1,6 +1,5 @@
 import axios, { type AxiosRequestConfig } from 'axios'
 import { ElMessage } from 'element-plus'
-import { setupMock } from '@/mock'
 
 export interface ApiResponse<T = unknown> {
   code: number
@@ -16,12 +15,10 @@ const http = axios.create({
 http.interceptors.request.use((config) => {
   const token = localStorage.getItem('token')
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+    config.headers.satoken = token
   }
   return config
 })
-
-setupMock(http)
 
 export async function request<T = unknown>(config: AxiosRequestConfig): Promise<T> {
   try {

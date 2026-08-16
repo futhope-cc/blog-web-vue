@@ -1,14 +1,14 @@
 <template>
   <div class="max-w-6xl mx-auto px-4 py-10">
     <div class="mb-10 flex items-center gap-6">
-      <img :src="profile?.avatar" alt="avatar" class="w-24 h-24 rounded-3xl shadow-lg border-4 border-white" />
+      <img :src="resolveAvatar(profile?.avatar)" alt="avatar" class="w-24 h-24 rounded-3xl shadow-lg border-4 border-white" />
       <div>
         <h1 class="text-3xl font-bold text-slate-800">{{ profile?.nickname }}</h1>
-        <p class="mt-1 text-slate-500">{{ profile?.tagline }}</p>
+        <p class="mt-1 text-slate-500">{{ profileTagline(profile) }}</p>
         <div class="mt-3 flex gap-3">
           <a v-for="s in socials" :key="s.name" :href="s.url" target="_blank" rel="noopener"
              class="w-9 h-9 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary transition-colors">
-            <el-icon :size="16"><component :is="s.icon" /></el-icon>
+            <el-icon :size="16"><component :is="socialIcon(s.name)" /></el-icon>
           </a>
         </div>
       </div>
@@ -22,7 +22,7 @@
       </div>
       <p class="text-slate-600 leading-loose">{{ profile?.bio }}</p>
       <div class="mt-4 flex flex-wrap gap-2">
-        <el-tag v-for="t in profile?.tags || []" :key="t" effect="plain" round>{{ t }}</el-tag>
+        <el-tag v-for="t in techStack" :key="t" effect="plain" round>{{ t }}</el-tag>
       </div>
     </section>
 
@@ -92,24 +92,19 @@
         <div class="w-1 h-6 rounded bg-white/60"></div>
         <h2 class="text-xl font-bold text-white">联系方式</h2>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <a :href="'mailto:' + (profile?.email || '')"
            class="rounded-xl bg-white/10 border border-white/20 p-5 hover:bg-white/20 transition-colors text-white">
           <el-icon :size="24"><Message /></el-icon>
           <p class="mt-3 font-semibold">Email</p>
-          <p class="text-sm text-indigo-100 mt-1 break-all">{{ profile?.email }}</p>
+          <p class="text-sm text-indigo-100 mt-1 break-all">{{ profile?.email || '未配置' }}</p>
         </a>
-        <a :href="githubUrl" target="_blank" rel="noopener"
+        <a :href="profile?.github || 'https://github.com'" target="_blank" rel="noopener"
            class="rounded-xl bg-white/10 border border-white/20 p-5 hover:bg-white/20 transition-colors text-white">
           <el-icon :size="24"><Link /></el-icon>
           <p class="mt-3 font-semibold">GitHub</p>
-          <p class="text-sm text-indigo-100 mt-1">github.com/devpanda</p>
+          <p class="text-sm text-indigo-100 mt-1">{{ profile?.github || '未配置' }}</p>
         </a>
-        <div class="rounded-xl bg-white/10 border border-white/20 p-5 text-white">
-          <el-icon :size="24"><Place /></el-icon>
-          <p class="mt-3 font-semibold">所在地</p>
-          <p class="text-sm text-indigo-100 mt-1">{{ profile?.location }}</p>
-        </div>
       </div>
     </section>
   </div>
@@ -119,25 +114,32 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { profileApi, projectApi } from '@/api'
-import type { Profile, Project } from '@/types'
-import { formatDate } from '@/utils'
+import type { Profile, Project, TechDirection, WorkExperience } from '@/types'
+import {
+  buildSocials,
+  formatDate,
+  parseDirections,
+  parseTechStack,
+  parseWorkExperience,
+  profileTagline,
+  resolveAvatar,
+  socialIcon,
+} from '@/utils'
 
 const router = useRouter()
 
 const profile = ref<Profile | null>(null)
-const socials = computed(() => profile.value?.socials ?? [])
-const githubUrl = computed(
-  () => profile.value?.socials.find((s) => s.name === 'GitHub')?.url || 'https://github.com'
-)
+const socials = computed(() => buildSocials(profile.value))
+const techStack = computed(() => parseTechStack(profile.value?.techStack))
 
-const directions = [
+const DEFAULT_DIRECTIONS: TechDirection[] = [
   { title: '音视频技术', icon: 'Film', desc: '深耕 FFmpeg 转码、WebRTC 低延迟传输、GB28181 国标接入与流媒体网关架构。' },
   { title: 'AI 推理落地', icon: 'Cpu', desc: '专注目标检测、图像处理等 CV 任务的工程化落地，熟练 TensorRT 量化加速。' },
   { title: '后端架构', icon: 'Connection', desc: '擅长 Spring Boot 微服务、缓存一致性、高可用设计与性能优化。' },
   { title: '工程效能', icon: 'Tools', desc: '推动 Docker 化部署、CI/CD 自动化与可观测性建设，提升团队交付效率。' }
 ]
 
-const workExperience = [
+const DEFAULT_WORK_EXPERIENCE: WorkExperience[] = [
   {
     company: '某头部视频云公司',
     position: '高级后端工程师',
@@ -157,6 +159,16 @@ const workExperience = [
     desc: '负责电商后台系统研发，包括商品、订单、库存模块，经历从单体到服务化的演进过程。'
   }
 ]
+
+const directions = computed<TechDirection[]>(() => {
+  const fromProfile = parseDirections(profile.value?.directions)
+  return fromProfile.length ? fromProfile : DEFAULT_DIRECTIONS
+})
+
+const workExperience = computed<WorkExperience[]>(() => {
+  const fromProfile = parseWorkExperience(profile.value?.workExperience)
+  return fromProfile.length ? fromProfile : DEFAULT_WORK_EXPERIENCE
+})
 
 const projects = ref<Project[]>([])
 

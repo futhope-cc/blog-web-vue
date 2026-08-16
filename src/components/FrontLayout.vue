@@ -88,7 +88,7 @@
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-const siteName = 'DevPanda'
+const siteName = '逻辑回响'
 const userAvatar = 'https://api.dicebear.com/9.x/notionists/svg?seed=panda'
 
 const navItems = [

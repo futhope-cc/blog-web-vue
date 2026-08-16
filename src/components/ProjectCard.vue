@@ -4,7 +4,7 @@
   >
     <router-link :to="`/project/${project.id}`" class="relative block overflow-hidden h-48 bg-slate-100">
       <img
-        :src="project.image"
+        :src="resolveFileUrl(project.image)"
         :alt="project.name"
         loading="lazy"
         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -45,6 +45,7 @@
 
 <script setup lang="ts">
 import type { Project } from '@/types'
+import { resolveFileUrl } from '@/utils'
 
 const props = defineProps<{ project: Project }>()
 
