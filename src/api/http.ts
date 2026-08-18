@@ -8,7 +8,7 @@ export interface ApiResponse<T = unknown> {
 }
 
 const http = axios.create({
-  baseURL: '/api',
+  baseURL: window.__APP_CONFIG__?.apiBaseUrl || '/api',
   timeout: 15000
 })
 
