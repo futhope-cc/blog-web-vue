@@ -70,14 +70,14 @@
           <div>
             <h4 class="text-white font-semibold mb-3">联系我</h4>
             <ul class="space-y-2 text-sm text-slate-400">
-              <li class="flex items-center gap-2"><el-icon><Message /></el-icon> devpanda@example.com</li>
-              <li class="flex items-center gap-2"><el-icon><Place /></el-icon> 杭州 / 远程</li>
-              <li class="flex items-center gap-2"><el-icon><Link /></el-icon> github.com/devpanda</li>
+              <li class="flex items-center gap-2"><el-icon><Message /></el-icon> {{ profile?.email }}</li>
+              <li class="flex items-center gap-2"><el-icon><Link /></el-icon> {{ githubDisplay }}</li>
             </ul>
           </div>
         </div>
         <div class="mt-8 pt-6 border-t border-slate-700/60 text-center text-xs text-slate-500">
-          © {{ year }} {{ siteName }} · Powered by Vue3 + Element Plus + TailwindCSS
+          Copyright © {{ year }} futhope
+          <span v-if="profile?.copyright" class="ml-2">| {{ profile.copyright }}</span>
         </div>
       </div>
     </footer>
@@ -85,11 +85,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { profileApi } from '@/api'
+import type { Profile } from '@/types'
+import { buildSocials, resolveAvatar } from '@/utils'
+
+const profile = ref<Profile | null>(null)
+
+const githubUrl = computed(() => {
+  const g = profile.value?.github
+  return g || 'https://github.com'
+})
+const githubDisplay = computed(() => {
+  return githubUrl.value.replace(/^https?:\/\//, '')
+})
 
 const siteName = '逻辑回响'
-const userAvatar = 'https://api.dicebear.com/9.x/notionists/svg?seed=panda'
+const userAvatar = computed(() => resolveAvatar(profile.value?.avatar))
 
 const navItems = [
   { path: '/', label: '首页' },
@@ -102,6 +115,12 @@ const navItems = [
 const route = useRoute()
 const mobileMenu = ref(false)
 const year = new Date().getFullYear()
+
+onMounted(async () => {
+  try {
+    profile.value = await profileApi.getProfile()
+  } catch {}
+})
 
 function isActive(path: string) {
   if (path === '/') return route.path === '/'

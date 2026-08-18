@@ -91,6 +91,7 @@ export interface Profile {
   techStack?: string
   socialLinks?: string
   email?: string
+  copyright?: string
   github?: string
   directions?: string
   workExperience?: string

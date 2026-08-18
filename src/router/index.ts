@@ -25,7 +25,7 @@ const router = createRouter({
 })
 
 router.afterEach((to) => {
-  const base = '个人技术博客'
+  const base = '逻辑回想'
   document.title = to.meta.title ? `${String(to.meta.title)} - ${base}` : base
 })
 
