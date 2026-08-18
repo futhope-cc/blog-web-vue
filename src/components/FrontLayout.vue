@@ -2,7 +2,7 @@
   <div class="min-h-screen flex flex-col bg-[#f6f7fb]">
     <header class="sticky top-0 z-40 backdrop-blur-md bg-white/85 border-b border-slate-200 shadow-sm">
       <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <router-link to="/" class="flex items-center gap-2 group">
+        <router-link to="/" class="flex items-center gap-2 group no-underline">
           <img :src="userAvatar" alt="logo" class="w-9 h-9 rounded-lg shadow" />
           <span class="text-xl font-bold text-slate-800 group-hover:text-primary transition-colors">
             {{ siteName }}

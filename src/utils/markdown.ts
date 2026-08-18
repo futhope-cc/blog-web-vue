@@ -24,8 +24,20 @@ export interface TocItem {
   level: number
 }
 
+function resolveImgSrc(html: string): string {
+  return html.replace(/(<img\s[^>]*?)src="(\/files\/[^"]+)"/gi, '$1src="/api$2"')
+}
+
+function renderRaw(content: string): string {
+  const normalized = (content || '')
+    .replace(/\\r\\n/g, '\n')
+    .replace(/\\n/g, '\n')
+    .replace(/\\t/g, '\t')
+  return resolveImgSrc(md.render(normalized))
+}
+
 export function renderMarkdown(content: string): string {
-  return md.render(content || '')
+  return renderRaw(content)
 }
 
 export function extractToc(html: string): TocItem[] {
@@ -67,8 +79,9 @@ export function renderMarkdownWithAnchors(content: string): { html: string; toc:
     if (level <= 4) {
       toc.push({ id, text: text.replace(/[#*`]/g, '').trim(), level })
     }
-    return token.tag
+    const attrs = md.renderer.renderAttrs(token)
+    return `<${token.tag}${attrs}>`
   }
-  const html = md.render(content || '')
+  const html = renderRaw(content)
   return { html, toc }
 }
