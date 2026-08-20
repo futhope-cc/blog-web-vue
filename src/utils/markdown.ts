@@ -71,10 +71,8 @@ export function renderMarkdownWithAnchors(content: string): { html: string; toc:
     const text = inline ? inline.content : ''
     counter++
     const id = `heading-${counter}`
-    if (inline && !inline.attrs?.some((a) => a[0] === 'id')) {
-      inline.attrs = inline.attrs || []
-      inline.attrs.push(['id', id])
-    }
+    token.attrs = token.attrs || []
+    token.attrs.push(['id', id])
     const level = Number(token.tag.slice(1))
     if (level <= 4) {
       toc.push({ id, text: text.replace(/[#*`]/g, '').trim(), level })
