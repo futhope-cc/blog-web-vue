@@ -51,7 +51,7 @@ export interface Project {
   name: string
   description: string
   technology: string
-  githubUrl: string
+  giteeUrl: string
   image: string
   deployment?: string
   featured?: number
@@ -92,7 +92,7 @@ export interface Profile {
   socialLinks?: string
   email?: string
   copyright?: string
-  github?: string
+  gitee?: string
   directions?: string
   workExperience?: string
   updateTime: string

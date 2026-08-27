@@ -20,7 +20,7 @@
 - 与旧 mock 的字段差异（当前代码已按真实接口适配，改字段时注意）：
   - 文章列表/详情没有 `tags` 对象数组和 `likeCount`，改为 `tagNames: string[]`（详情另有 `tagIds`），发布时间用 `publishTime`。
   - 分类/标签列表无 `createTime`；分类含 `articleCount`。
-  - `/profile` 返回 `techStack`（逗号分隔字符串）、`socialLinks`（JSON 字符串）、`email`、`github`，没有 `tagline/location/socials`。展示用 `src/utils/index.ts` 中的 `parseTechStack/parseSocialLinks/buildSocials/profileTagline` 等辅助函数映射。
+  - `/profile` 返回 `techStack`（逗号分隔字符串）、`socialLinks`（JSON 字符串）、`email`、`gitee`，没有 `tagline/location/socials`。展示用 `src/utils/index.ts` 中的 `parseTechStack/parseSocialLinks/buildSocials/profileTagline` 等辅助函数映射。
   - 本地存储图片返回相对路径 `/files/...`，需经 `resolveFileUrl()` 补上 `/api` 前缀（dev 下由 `/api` 代理转发）。
 - 无后台管理页面（不登录、无写操作）。`src/mock` 目录已删除，不要再依赖 mock。
 

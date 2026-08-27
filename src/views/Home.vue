@@ -120,13 +120,7 @@
               <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 to-transparent"></div>
             </div>
             <div class="p-5">
-              <div class="flex items-center justify-between">
-                <h3 class="font-bold text-white group-hover:text-indigo-300 transition-colors">{{ project.name }}</h3>
-                <a v-if="project.githubUrl" :href="project.githubUrl" target="_blank" rel="noopener"
-                   class="text-slate-400 hover:text-white transition-colors" @click.stop>
-                  <el-icon><Link /></el-icon>
-                </a>
-              </div>
+              <h3 class="font-bold text-white group-hover:text-indigo-300 transition-colors">{{ project.name }}</h3>
               <p class="mt-2 text-xs text-slate-400 line-clamp-2">{{ project.description }}</p>
             </div>
           </div>
@@ -147,12 +141,7 @@
                class="px-6 py-3 rounded-xl bg-white text-indigo-700 font-semibold hover:bg-indigo-50 transition-colors flex items-center gap-2">
               <el-icon><Message /></el-icon> 发送邮件
             </a>
-            <a :href="githubUrl" target="_blank" rel="noopener"
-               class="px-6 py-3 rounded-xl bg-white/15 border border-white/30 hover:bg-white/25 transition-colors flex items-center gap-2">
-              <el-icon><Link /></el-icon> GitHub
-            </a>
           </div>
-          <p class="mt-6 text-sm text-indigo-200">或直接发送邮件至 {{ profile?.email }}</p>
         </div>
         </div>
       </div>
@@ -172,7 +161,6 @@ const router = useRouter()
 
 const profile = ref<Profile | null>(null)
 const socials = computed(() => buildSocials(profile.value))
-const githubUrl = computed(() => profile.value?.github || 'https://github.com')
 
 const loadingArticles = ref(true)
 const latestArticles = ref<ArticleListItem[]>([])

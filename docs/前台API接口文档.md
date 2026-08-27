@@ -182,7 +182,7 @@
       "name": "项目名称",
       "description": "项目描述",
       "technology": "Vue3 / Go / Redis",
-      "githubUrl": "https://github.com/devpanda/demo",
+      "giteeUrl": "https://gitee.com/devpanda/demo",
       "image": "https://picsum.photos/seed/project1/1200/675",
       "deployment": "Docker Compose 一键部署",
       "featured": 1,
@@ -265,7 +265,7 @@ export interface Project {
   name: string
   description: string
   technology: string
-  githubUrl: string
+  giteeUrl: string
   image: string
   deployment?: string
   featured?: number

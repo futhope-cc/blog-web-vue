@@ -14,10 +14,6 @@
                 <el-tag v-if="project.featured === 1" type="danger" effect="dark" class="mb-3">推荐项目</el-tag>
                 <h1 class="text-3xl font-bold text-slate-900">{{ project.name }}</h1>
               </div>
-              <a v-if="project.githubUrl" :href="project.githubUrl" target="_blank" rel="noopener"
-                 class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 text-white hover:bg-slate-700 transition-colors">
-                <el-icon :size="18"><Link /></el-icon> GitHub
-              </a>
             </div>
 
             <p class="mt-5 text-slate-600 leading-relaxed text-lg">{{ project.description }}</p>

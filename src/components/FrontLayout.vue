@@ -70,8 +70,10 @@
           <div>
             <h4 class="text-white font-semibold mb-3">联系我</h4>
             <ul class="space-y-2 text-sm text-slate-400">
-              <li class="flex items-center gap-2"><el-icon><Message /></el-icon> {{ profile?.email }}</li>
-              <li class="flex items-center gap-2"><el-icon><Link /></el-icon> {{ githubDisplay }}</li>
+              <li class="flex items-center gap-2 text-white">
+                <el-icon><Message /></el-icon>
+                <a :href="'mailto:' + (profile?.email || '')" class="hover:text-white transition-colors">{{ profile?.email || '暂无邮箱' }}</a>
+              </li>
             </ul>
           </div>
         </div>
@@ -89,17 +91,9 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { profileApi } from '@/api'
 import type { Profile } from '@/types'
-import { buildSocials, resolveAvatar } from '@/utils'
+import { resolveAvatar } from '@/utils'
 
 const profile = ref<Profile | null>(null)
-
-const githubUrl = computed(() => {
-  const g = profile.value?.github
-  return g || 'https://github.com'
-})
-const githubDisplay = computed(() => {
-  return githubUrl.value.replace(/^https?:\/\//, '')
-})
 
 const siteName = '逻辑回响'
 const userAvatar = computed(() => resolveAvatar(profile.value?.avatar))

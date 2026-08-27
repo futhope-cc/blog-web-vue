@@ -25,10 +25,6 @@
         <router-link :to="`/project/${project.id}`">
           <h3 class="text-lg font-bold text-slate-800 group-hover:text-primary transition-colors">{{ project.name }}</h3>
         </router-link>
-        <a v-if="project.githubUrl" :href="project.githubUrl" target="_blank" rel="noopener"
-           class="text-slate-400 hover:text-primary transition-colors shrink-0">
-          <el-icon :size="20"><Link /></el-icon>
-        </a>
       </div>
       <p class="mt-2 text-sm text-slate-500 leading-relaxed line-clamp-3 flex-1">{{ project.description }}</p>
 

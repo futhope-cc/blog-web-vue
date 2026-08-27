@@ -82,24 +82,15 @@ export function parseSocialLinks(socialLinks?: string | null): SocialLink[] {
 }
 
 /**
- * 组装个人社交链接：优先 socialLinks，再补充 github / email 字段。
+ * 组装个人社交链接：仅取 socialLinks JSON 字段，不再自动补充 gitee / email。
  */
 export function buildSocials(profile: Profile | null | undefined): SocialLink[] {
   if (!profile) return []
-  const links = [...parseSocialLinks(profile.socialLinks)]
-  if (profile.github && !links.some((l) => l.name.toLowerCase() === 'github')) {
-    links.push({ name: 'GitHub', url: profile.github })
-  }
-  if (profile.email && !links.some((l) => l.name === '邮箱' || l.name.toLowerCase() === 'email')) {
-    links.push({ name: '邮箱', url: `mailto:${profile.email}` })
-  }
-  return links
+  return parseSocialLinks(profile.socialLinks)
 }
 
 const SOCIAL_ICONS: Record<string, string> = {
-  GitHub: 'Link',
   Gitee: 'Position',
-  Github: 'Link',
   Email: 'Message',
   邮箱: 'Message',
   Mail: 'Message',

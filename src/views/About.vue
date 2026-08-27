@@ -92,18 +92,12 @@
         <div class="w-1 h-6 rounded bg-white/60"></div>
         <h2 class="text-xl font-bold text-white">联系方式</h2>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4">
         <a :href="'mailto:' + (profile?.email || '')"
            class="rounded-xl bg-white/10 border border-white/20 p-5 hover:bg-white/20 transition-colors text-white">
           <el-icon :size="24"><Message /></el-icon>
           <p class="mt-3 font-semibold">Email</p>
           <p class="text-sm text-indigo-100 mt-1 break-all">{{ profile?.email || '未配置' }}</p>
-        </a>
-        <a :href="profile?.github || 'https://github.com'" target="_blank" rel="noopener"
-           class="rounded-xl bg-white/10 border border-white/20 p-5 hover:bg-white/20 transition-colors text-white">
-          <el-icon :size="24"><Link /></el-icon>
-          <p class="mt-3 font-semibold">GitHub</p>
-          <p class="text-sm text-indigo-100 mt-1">{{ profile?.github || '未配置' }}</p>
         </a>
       </div>
     </section>
